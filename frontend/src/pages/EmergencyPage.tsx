@@ -4,10 +4,12 @@ import { Siren, AlertTriangle, ShieldAlert, RefreshCw, Flame, Shield, Ambulance 
 import { emergencyService } from '../services/emergencyService';
 import { TableSkeleton } from '../components/SkeletonLoader';
 import { ErrorState } from '../components/ErrorState';
+import { useToast } from '../context/ToastContext';
 import type { EmergencyPriorityResponse } from '../types';
 
 export const EmergencyPage: React.FC = () => {
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
   const [selectedLane, setSelectedLane] = useState<string>('B');
   const [selectedVehicle, setSelectedVehicle] = useState<string>('Ambulance');
   const [priorityResult, setPriorityResult] = useState<EmergencyPriorityResponse | null>(null);
@@ -25,6 +27,7 @@ export const EmergencyPage: React.FC = () => {
       emergencyService.activatePriorityCorridor({ vehicle_type: vehicleType, lane: selectedLane }),
     onSuccess: (data) => {
       setPriorityResult(data);
+      showToast(`Emergency Corridor Activated for Lane ${data.green_lane}!`, 'danger');
       // Invalidate queries so Navbar, RightStatusPanel, and Dashboard refresh immediately
       queryClient.invalidateQueries({ queryKey: ['emergencyEvents'] });
       queryClient.invalidateQueries({ queryKey: ['liveStatus'] });
@@ -68,12 +71,13 @@ export const EmergencyPage: React.FC = () => {
 
         {/* Target Approach Lane Buttons */}
         <div className="space-y-2">
-          <label className="text-xs font-semibold uppercase tracking-wider text-slate-400">Step 1: Select Approach Lane</label>
+          <label className="text-xs font-semibold uppercase tracking-wider text-slate-400">Step 1: Select Target Approach Lane</label>
           <div className="grid grid-cols-4 gap-4">
             {['A', 'B', 'C', 'D'].map((lane) => (
               <button
                 key={lane}
                 onClick={() => setSelectedLane(lane)}
+                aria-label={`Select approach Lane ${lane}`}
                 className={`py-3 px-4 rounded-lg font-mono text-sm font-bold border transition-colors ${
                   selectedLane === lane
                     ? 'bg-blue-600 text-white border-blue-400 shadow-sm'
@@ -94,6 +98,7 @@ export const EmergencyPage: React.FC = () => {
             <button
               onClick={() => handleDispatch('Ambulance')}
               disabled={priorityMutation.isPending}
+              aria-label={`Activate Ambulance corridor for Lane ${selectedLane}`}
               className="py-3 px-4 rounded-lg bg-red-600 hover:bg-red-500 disabled:bg-slate-700 text-white text-xs font-bold flex items-center justify-center space-x-2 border border-red-400/30 transition-colors shadow-sm"
             >
               <Ambulance className="w-4 h-4" />
@@ -104,6 +109,7 @@ export const EmergencyPage: React.FC = () => {
             <button
               onClick={() => handleDispatch('Police Car')}
               disabled={priorityMutation.isPending}
+              aria-label={`Activate Police corridor for Lane ${selectedLane}`}
               className="py-3 px-4 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 text-white text-xs font-bold flex items-center justify-center space-x-2 border border-blue-400/30 transition-colors shadow-sm"
             >
               <Shield className="w-4 h-4" />
@@ -114,6 +120,7 @@ export const EmergencyPage: React.FC = () => {
             <button
               onClick={() => handleDispatch('Fire Truck')}
               disabled={priorityMutation.isPending}
+              aria-label={`Activate Fire Truck corridor for Lane ${selectedLane}`}
               className="py-3 px-4 rounded-lg bg-amber-600 hover:bg-amber-500 disabled:bg-slate-700 text-white text-xs font-bold flex items-center justify-center space-x-2 border border-amber-400/30 transition-colors shadow-sm"
             >
               <Flame className="w-4 h-4" />

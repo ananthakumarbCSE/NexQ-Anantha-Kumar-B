@@ -5,11 +5,14 @@ knows about every table before `Base.metadata.create_all()` runs.
 """
 
 from app.models.emergency import EmergencyEvent
+from app.models.quantum import QuantumOptimization
 from app.models.signal import TrafficSignal
 from app.models.traffic import TrafficRecord
 
 __all__ = [
     "EmergencyEvent",
+    "QuantumOptimization",
     "TrafficRecord",
     "TrafficSignal",
 ]
+

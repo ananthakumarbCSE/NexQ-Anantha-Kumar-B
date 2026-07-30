@@ -144,3 +144,24 @@ export interface VideoAnalysisResponse {
   frames_processed: number;
   inference_time_ms: number;
 }
+
+export interface QuantumOptimizeRequest {
+  lane_A: number;
+  lane_B: number;
+  lane_C: number;
+  lane_D: number;
+}
+
+export interface LaneTimings {
+  A: number;
+  B: number;
+  C: number;
+  D: number;
+}
+
+export interface QuantumOptimizeResponse {
+  current_timings: LaneTimings;
+  optimized_timings: LaneTimings;
+  estimated_waiting_time_reduction: number;
+  optimization_method: string;
+}

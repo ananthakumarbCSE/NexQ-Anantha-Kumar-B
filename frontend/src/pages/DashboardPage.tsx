@@ -187,8 +187,8 @@ export const DashboardPage: React.FC = () => {
       {/* Main Intersection Visualization Container */}
       <IntersectionMap 
         signals={mappedSignals} 
-        emergencyActive={liveStatus?.emergency}
-        emergencyLane="B"
+        emergencyActive={liveStatus?.emergency ?? false}
+        emergencyLane={liveStatus?.emergency ? 'B' : ''}
       />
     </div>
   );

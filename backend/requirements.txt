@@ -10,3 +10,5 @@ ultralytics==8.3.145
 numpy==2.2.6
 Pillow==11.2.1
 python-multipart==0.0.20
+qiskit>=1.0
+qiskit-aer>=0.14

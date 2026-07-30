@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ToastProvider } from './context/ToastContext';
 import { DashboardLayout } from './layouts/DashboardLayout';
 import { DashboardPage } from './pages/DashboardPage';
 import { LiveDetectionPage } from './pages/LiveDetectionPage';
@@ -24,19 +25,21 @@ const queryClient = new QueryClient({
 export const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<DashboardLayout />}>
-            <Route index element={<DashboardPage />} />
-            <Route path="live" element={<LiveDetectionPage />} />
-            <Route path="analytics" element={<AnalyticsPage />} />
-            <Route path="emergency" element={<EmergencyPage />} />
-            <Route path="quantum" element={<QuantumPage />} />
-            <Route path="settings" element={<SettingsPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <ToastProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<DashboardLayout />}>
+              <Route index element={<DashboardPage />} />
+              <Route path="live" element={<LiveDetectionPage />} />
+              <Route path="analytics" element={<AnalyticsPage />} />
+              <Route path="emergency" element={<EmergencyPage />} />
+              <Route path="quantum" element={<QuantumPage />} />
+              <Route path="settings" element={<SettingsPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </ToastProvider>
     </QueryClientProvider>
   );
 };
