@@ -165,3 +165,9 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+# Machine Learning models
+*.pt
+*.onnx
+*.engine
+

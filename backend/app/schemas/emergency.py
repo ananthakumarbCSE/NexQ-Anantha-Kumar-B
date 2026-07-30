@@ -26,3 +26,22 @@ class EmergencyEventResponse(BaseModel):
     vehicle_type: str
     status: str
     location: str
+
+
+# ── Priority (Green Corridor) ───────────────────────────────────────
+
+class EmergencyPriorityRequest(BaseModel):
+    """Payload accepted by POST /api/v1/emergency/priority."""
+
+    vehicle_type: str = Field(..., min_length=1, max_length=64, description="e.g. Ambulance, Fire Truck")
+    lane: str = Field(..., min_length=1, max_length=32, description="Lane to grant green corridor, e.g. B")
+
+
+class EmergencyPriorityResponse(BaseModel):
+    """Green corridor response returned by the priority endpoint."""
+
+    mode: str = Field(..., description="Corridor mode, e.g. GREEN_CORRIDOR")
+    green_lane: str = Field(..., description="Lane that receives green signal")
+    other_lanes: str = Field(..., description="Status of all other lanes")
+    estimated_clearance: str = Field(..., description="Estimated time for vehicle to clear")
+

@@ -8,6 +8,9 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
+from pathlib import Path
+
+from app.ai.detector import yolo_detector
 from app.api.v1.router import v1_router
 from app.core.config import settings
 from app.core.logging import setup_logging
@@ -25,10 +28,20 @@ logger = logging.getLogger("q_edge_guardian")
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncGenerator[None, None]:
-    """Create tables on startup; cleanup on shutdown."""
+    """Create tables on startup, load YOLO model, create upload dirs; cleanup on shutdown."""
     setup_logging()
     logger.info("Creating database tables …")
     Base.metadata.create_all(bind=engine)
+
+    # Ensure required directories exist
+    base_dir = Path(__file__).resolve().parent
+    (base_dir / "uploads").mkdir(parents=True, exist_ok=True)
+    (base_dir / "sample_videos").mkdir(parents=True, exist_ok=True)
+
+    # Warm-load YOLO model singleton once on startup
+    logger.info("Initializing YOLO model ...")
+    yolo_detector.load_model()
+
     logger.info("Q-Edge Guardian is ready!")
     yield
     logger.info("Shutting down Q-Edge Guardian …")

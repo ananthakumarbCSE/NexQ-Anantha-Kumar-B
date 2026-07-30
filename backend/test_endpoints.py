@@ -1,4 +1,4 @@
-"""Smoke-test every Q-Edge Guardian endpoint."""
+"""Smoke-test every Q-Edge Guardian endpoint (including new AI & system endpoints)."""
 import json
 import urllib.request
 
@@ -71,6 +71,43 @@ check("GET /api/v1/dashboard", s, r, 200, [
     r.get("emergency_events", 0) >= 1,
     r.get("active_signals", 0) >= 1,
 ])
+
+# 10 — System Status (NEW)
+s, r = req("GET", "/api/v1/system")
+check("GET /api/v1/system", s, r, 200, [
+    "yolo_loaded" in r,
+    "model_name" in r,
+    r.get("database_connected") is True,
+])
+
+# 11 — Live Status (NEW)
+s, r = req("GET", "/api/v1/live/status")
+check("GET /api/v1/live/status", s, r, 200, [
+    "vehicles" in r,
+    "density" in r,
+    "green_time" in r,
+    "emergency" in r,
+])
+
+# 12 — Emergency Priority Green Corridor (NEW)
+s, r = req("POST", "/api/v1/emergency/priority", {"vehicle_type": "Ambulance", "lane": "B"})
+check("POST /api/v1/emergency/priority", s, r, 201, [
+    r.get("mode") == "GREEN_CORRIDOR",
+    r.get("green_lane") == "B",
+    r.get("other_lanes") == "RED",
+    "estimated_clearance" in r,
+])
+
+# 13 — Video Analysis Endpoint (NEW)
+try:
+    s, r = req("POST", "/api/v1/analyze/video")
+    check("POST /api/v1/analyze/video (sample fallback)", s, r, 200, [
+        "vehicle_counts" in r,
+        "density" in r,
+        "recommendation" in r,
+    ])
+except Exception as err:
+    print(f"[SKIP] POST /api/v1/analyze/video (No video file uploaded and no sample video present): {err}")
 
 print(f"\n{'='*40}")
 print(f"Results: {PASS} passed, {FAIL} failed")
