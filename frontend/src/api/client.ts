@@ -13,7 +13,7 @@ export const setBaseUrl = (url: string): void => {
 
 export const apiClient = axios.create({
   baseURL: getBaseUrl(),
-  timeout: 10000,
+  timeout: 300000, // 5 minutes (increased from 10s for long video inference)
   headers: {
     'Content-Type': 'application/json',
   },
